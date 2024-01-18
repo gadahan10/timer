@@ -2,22 +2,29 @@ import { TestBed } from '@angular/core/testing';
 import { TaskFactoryService } from './task-factory.service';
 import { LogicService } from './logic.service';
 import { skip, bufferCount } from 'rxjs/operators';
+import { Store, StoreModule } from '@ngrx/store';
+import { rootReducer } from './store/reducers';
+
 describe('LogicService', () => {
   let service: LogicService;
-  beforeEach(() => {
-    const taskModelStub = { id: {}, buttonText: {} };
+  let store: Store;
+  beforeEach(() => {    
     const fakeService = {
       createTask: () => ({}),
       pause: () => ({}),
       play: () => ({}),
     };
     TestBed.configureTestingModule({
+      imports: [
+        StoreModule.forRoot(rootReducer), 
+      ],
       providers: [
         LogicService,
-        { provide: TaskFactoryService, useValue: fakeService },
+        { provide: TaskFactoryService, useValue: fakeService }
       ],
     });
-    service = TestBed.get(LogicService);
+    service = TestBed.inject(LogicService);
+    store = TestBed.inject(Store);
   });
   it('can load instance', () => {
     expect(service).toBeTruthy();

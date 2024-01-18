@@ -1,6 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -10,6 +9,11 @@ import { TaskPresenterComponent } from './task-presenter/task-presenter.componen
 import { TaskAddComponent } from './task-add/task-add.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MinuteSecondsPipe } from './minute-seconds.pipe';
+import { StoreModule } from '@ngrx/store';
+import { rootReducer } from './store/reducers';
+import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+import { environment } from 'src/environments/environment';
+
 
 @NgModule({
   declarations: [
@@ -24,7 +28,12 @@ import { MinuteSecondsPipe } from './minute-seconds.pipe';
     AppRoutingModule,
     BrowserAnimationsModule,
     MaterialModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    StoreModule.forRoot(rootReducer),
+    StoreDevtoolsModule.instrument({
+      maxAge: 25,
+      logOnly: !environment.production
+    })   
   ],
   providers: [],
   bootstrap: [AppComponent]

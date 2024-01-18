@@ -1,8 +1,24 @@
 import { TestBed, fakeAsync, tick, flush } from '@angular/core/testing';
 import { TimerManagerService } from './timer-manager.service';
 import { merge, concat } from 'rxjs';
+import { TaskFactoryService } from './task-factory.service';
+import { Store, StoreModule } from '@ngrx/store';
+import { rootReducer } from './store/reducers';
 describe('TimerManagerService', () => {
-  beforeEach(() => TestBed.configureTestingModule({}));
+  let store: Store;
+  let service: TaskFactoryService
+  beforeEach(() => {        
+    TestBed.configureTestingModule({
+      imports: [
+        StoreModule.forRoot(rootReducer), 
+      ],
+      providers: [
+        TimerManagerService
+      ],
+    });
+    service = TestBed.inject(TaskFactoryService);
+    store = TestBed.inject(Store);
+  });
 
   it('should be created', () => {
     const service: TimerManagerService = TestBed.get(TimerManagerService);
