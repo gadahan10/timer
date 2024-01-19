@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { TaskModel } from './models/task-model';
 import { Observable, combineLatest, of } from 'rxjs';
 import { TaskFactoryService } from './task-factory.service';
-import { first, map, switchMap } from 'rxjs/operators';
+import { map, switchMap } from 'rxjs/operators';
 import { CloneSubject } from './clone-subject';
 import { Store } from '@ngrx/store';
 import * as TasksActions from './store/actions/tasks.actions'

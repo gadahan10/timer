@@ -36,10 +36,8 @@ export class TimerManagerService {
         .pipe(
           takeWhile(() => currentTimer.isRunning),
           tap(() => {
-            this.ngZone.run(() => {
               currentTimer.subj$.next(currentTimer.subj$.value + 1)
-              this.store.dispatch(TasksActions.INCREMENT())
-            })
+              this.store.dispatch(TasksActions.INCREMENT())   
           })
         ).subscribe();   
     }

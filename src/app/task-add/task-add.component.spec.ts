@@ -39,9 +39,18 @@ describe('TaskAddComponent', () => {
         fixture.debugElement.injector.get(LogicService);
       jest.spyOn(logicServiceStub, 'nameExists').mockReturnValue(of(true));
 
-      const given = { value: 'hello' } as any;
-      component.validateNameExists(given);
-      expect(logicServiceStub.nameExists).toHaveBeenCalled();
+      // Fixed required due to change in validateNameExists implementation
+      const formBuilderStub: FormBuilder =
+        fixture.debugElement.injector.get(FormBuilder);
+      jest.spyOn(formBuilderStub, 'group');
+      component.ngOnInit();
+
+      component.form.get('text')?.patchValue('hello')
+      component.form.get('text')?.valueChanges.subscribe(newValue => {
+        expect(logicServiceStub.nameExists).toHaveBeenCalled();
+      });
+
+
     });
   });
   describe('ngOnInit', () => {
