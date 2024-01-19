@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import {
   FormBuilder,
   Validators,
@@ -6,17 +6,18 @@ import {
   AbstractControl,
 } from '@angular/forms';
 import { LogicService } from '../logic.service';
-import { map } from 'rxjs/operators';
-import { of } from 'rxjs';
+import { debounceTime, distinctUntilChanged, first, map, switchMap, tap } from 'rxjs';
 
 @Component({
   selector: 'app-task-add',
   templateUrl: './task-add.component.html',
   styleUrls: ['./task-add.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TaskAddComponent implements OnInit {
   form: FormGroup;
-  constructor(private fb: FormBuilder, private service: LogicService) {}
+  constructor(private fb: FormBuilder, private service: LogicService, private cdr: ChangeDetectorRef) {}
+  
   ngOnInit(): void {
     this.form = this.fb.group({
       text: [
@@ -26,15 +27,26 @@ export class TaskAddComponent implements OnInit {
       ],
     });
   }
-  submitHandler(text: string) {
-    this.service.addTask(text);
+  
+  submitHandler(text: string) {   
+    this.service.addTask(text.toUpperCase());
     this.resetForm();
   }
+
   private resetForm() {
     this.form.reset();
   }
 
   validateNameExists(control: AbstractControl) {
-    return of(null);
+    const name = control.value.toUpperCase();
+    
+    return this.form.valueChanges.pipe(
+      debounceTime(400),
+      distinctUntilChanged(),
+      switchMap(() => this.service.nameExists(name)),
+      tap(() => this.cdr.markForCheck()),
+      map((nameExists: boolean) => nameExists ? { nameTaken: true } : null)
+    ).pipe(first())
+    
   }
 }
